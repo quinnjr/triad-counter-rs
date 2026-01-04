@@ -76,17 +76,26 @@ fn bench_full_pipeline(c: &mut Criterion) {
     for size in [50, 100, 200] {
         let matrix = generate_matrix(size);
 
-        group.bench_with_input(BenchmarkId::new("from_matrix_and_run", size), &matrix, |b, m| {
-            b.iter(|| {
-                let mut plugin = TriadCounterPlugin::from_matrix(m.clone());
-                plugin.run();
-                black_box(plugin.counts().total())
-            })
-        });
+        group.bench_with_input(
+            BenchmarkId::new("from_matrix_and_run", size),
+            &matrix,
+            |b, m| {
+                b.iter(|| {
+                    let mut plugin = TriadCounterPlugin::from_matrix(m.clone());
+                    plugin.run();
+                    black_box(plugin.counts().total())
+                })
+            },
+        );
     }
 
     group.finish();
 }
 
-criterion_group!(benches, bench_triad_counting, bench_large_networks, bench_full_pipeline);
+criterion_group!(
+    benches,
+    bench_triad_counting,
+    bench_large_networks,
+    bench_full_pipeline
+);
 criterion_main!(benches);
